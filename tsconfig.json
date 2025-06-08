@@ -1,0 +1,6 @@
+{
+  "extends": "@map-colonies/tsconfig/tsconfig-app.json",
+  "compilerOptions": {
+    "target": "esnext"
+  }
+}
