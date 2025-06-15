@@ -24,7 +24,7 @@ interface RouteInfo {
   path?: string;
   service: string;
   port?: string;
-  tls: {
+  tls?: {
     termination: string;
     certificateInfo?: CertificateInfo; // Optional, only if certificate is present
     hostMatchesCertificate?: boolean; // Whether the route host matches certificate
@@ -129,34 +129,36 @@ class OpenShiftRouteRetriever {
       path: spec.path,
       service: spec.to.name,
       port: spec.port?.targetPort,
-      tls: {
-        termination: spec.tls.termination,
-      },
     };
 
-    // Parse certificate if present
-    if (spec.tls?.certificate) {
-      try {
-        const certInfo = this.parseCertificate(spec.tls.certificate);
-        routeInfo.tls.certificateInfo = certInfo;
-        routeInfo.tls.hostMatchesCertificate = this.checkHostMatchesCertificate(
-          routeInfo.host,
-          certInfo
-        );
+    // Only add TLS info if the route is secured
+    if (spec.tls) {
+      routeInfo.tls = {
+        termination: spec.tls.termination,
+      };
 
-        // Check if private key matches certificate
-        if (spec.tls?.key) {
-          routeInfo.tls.privateKeyMatchesCertificate =
-            this.checkPrivateKeyMatchesCertificate(
-              spec.tls.certificate,
-              spec.tls.key
-            );
+      // Parse certificate if present
+      if (spec.tls.certificate) {
+        try {
+          const certInfo = this.parseCertificate(spec.tls.certificate);
+          routeInfo.tls.certificateInfo = certInfo;
+          routeInfo.tls.hostMatchesCertificate =
+            this.checkHostMatchesCertificate(routeInfo.host, certInfo);
+
+          // Check if private key matches certificate
+          if (spec.tls.key) {
+            routeInfo.tls.privateKeyMatchesCertificate =
+              this.checkPrivateKeyMatchesCertificate(
+                spec.tls.certificate,
+                spec.tls.key
+              );
+          }
+        } catch (error) {
+          console.error(
+            `Failed to parse certificate for route ${routeInfo.name}:`,
+            error
+          );
         }
-      } catch (error) {
-        console.error(
-          `Failed to parse certificate for route ${routeInfo.name}:`,
-          error
-        );
       }
     }
 
@@ -262,7 +264,7 @@ program
       // Filter out routes without certificates if requested
       if (options.filterNoCert) {
         routes = routes.filter(
-          (route) => route.tls.certificateInfo !== undefined
+          (route) => route.tls?.certificateInfo !== undefined
         );
       }
 
@@ -275,8 +277,8 @@ program
         });
 
         routes.forEach((route) => {
-          const hostMatch = route.tls.hostMatchesCertificate;
-          const keyMatch = route.tls.privateKeyMatchesCertificate;
+          const hostMatch = route.tls?.hostMatchesCertificate;
+          const keyMatch = route.tls?.privateKeyMatchesCertificate;
 
           const hostMatchDisplay =
             hostMatch === true ? "✓" : hostMatch === false ? "✗" : "N/A";
@@ -287,7 +289,7 @@ program
             route.name,
             route.namespace,
             route.host,
-            route.tls.termination,
+            route.tls?.termination || "None",
             hostMatchDisplay,
             keyMatchDisplay,
           ]);
