@@ -1,0 +1,21 @@
+Name,Namespace,Host,Path,Service,Port,TLS Termination,Certificate Subject,Certificate Issuer,Certificate Valid From,Certificate Valid To,Certificate Serial Number,Certificate Fingerprint,Certificate Subject Alt Names,Host Matches Certificate,Private Key Matches Certificate
+alertmanager-route,infra-dev,alertmanager-dev.mapcolonies.net,/,infra-monitoring-alertmanager,,edge,CN=*.mapcolonies.net,"C=US\nST=Arizona\nL=Scottsdale\nO=GoDaddy.com\, Inc.\nOU=http://certs.godaddy.com/repository/\nCN=Go Daddy Secure Certificate Authority - G2",2025-03-20T14:37:43.000Z,2026-04-21T12:21:26.000Z,A059F97F5A21867D,72:97:31:E4:77:0A:13:90:C7:18:2C:19:90:99:B8:C2:44:C2:40:0C,DNS:*.mapcolonies.net; DNS:mapcolonies.net,true,true
+alloy-ui,infra-dev,alloy-ui-infra-dev.apps.j1lk3njp.eastus.aroapp.io,,infra-monitoring-alloy,http-metrics,edge,,,,,,,,,
+avi,infra-dev,avi.com,,bla-nginx-service,nginx,edge,CN=*.mapcolonies.net,"C=US\nST=Arizona\nL=Scottsdale\nO=GoDaddy.com\, Inc.\nOU=http://certs.godaddy.com/repository/\nCN=Go Daddy Secure Certificate Authority - G2",2025-03-20T14:37:43.000Z,2026-04-21T12:21:26.000Z,A059F97F5A21867D,72:97:31:E4:77:0A:13:90:C7:18:2C:19:90:99:B8:C2:44:C2:40:0C,DNS:*.mapcolonies.net; DNS:mapcolonies.net,false,true
+bla-nginx-route,infra-dev,bla-nginx-route-infra-dev.apps.j1lk3njp.eastus.aroapp.io,/,bla-nginx-service,nginx,edge,,,,,,,,,
+bla2,infra-dev,bla2-infra-dev.apps.j1lk3njp.eastus.aroapp.io,,bla2-avi,http,edge,,,,,,,,,
+bla2-nginx-route,infra-dev,bla2-nginx-route-infra-dev.apps.j1lk3njp.eastus.aroapp.io,/,bla2-nginx-service,nginx,edge,,,,,,,,,
+geojsonviewer,infra-dev,geojsonviewer-infra-dev.apps.j1lk3njp.eastus.aroapp.io,,geojsonviewer-geojsonviewer,http,edge,,,,,,,,,
+grafana-fer,infra-dev,grafana-fer-infra-dev.apps.j1lk3njp.eastus.aroapp.io,,grafana-ofer,service,edge,,,,,,,,,
+grafana-route,infra-dev,grafana-dev.mapcolonies.net,/,infra-monitoring-grafana,,edge,CN=*.mapcolonies.net,"C=US\nST=Arizona\nL=Scottsdale\nO=GoDaddy.com\, Inc.\nOU=http://certs.godaddy.com/repository/\nCN=Go Daddy Secure Certificate Authority - G2",2025-03-20T14:37:43.000Z,2026-04-21T12:21:26.000Z,A059F97F5A21867D,72:97:31:E4:77:0A:13:90:C7:18:2C:19:90:99:B8:C2:44:C2:40:0C,DNS:*.mapcolonies.net; DNS:mapcolonies.net,true,true
+infra-config-config-server-route,infra-dev,infra-config-config-server-route-infra-dev.apps.j1lk3njp.eastus.aroapp.io,/,infra-config-config-server-service,,edge,,,,,,,,,
+infra-monitoring-alertmanager,infra-dev,infra-monitoring-alertmanager-infra-dev.apps.j1lk3njp.eastus.aroapp.io,,infra-monitoring-alertmanager,http,edge,,,,,,,,,
+infra-monitoring-grafana,infra-dev,infra-monitoring-grafana-infra-dev.apps.j1lk3njp.eastus.aroapp.io,,infra-monitoring-grafana,service,edge,,,,,,,,,
+infra-monitoring-karma,infra-dev,infra-monitoring-karma-infra-dev.apps.j1lk3njp.eastus.aroapp.io,,infra-monitoring-karma,http,edge,,,,,,,,,
+infra-monitoring-prometheus,infra-dev,infra-monitoring-prometheus-infra-dev.apps.j1lk3njp.eastus.aroapp.io,,infra-monitoring-prometheus-server,http,edge,,,,,,,,,
+infra-nginx-alloy-route,infra-dev,infra-nginx-alloy-route-infra-dev.apps.j1lk3njp.eastus.aroapp.io,/,infra-nginx-alloy-service,nginx,edge,,,,,,,,,
+kibana,infra-dev,kibana-infra-dev.apps.j1lk3njp.eastus.aroapp.io,,infra-monitoring-kibana,http,edge,,,,,,,,,
+loki-gateway,infra-dev,loki-gateway-infra-dev.apps.j1lk3njp.eastus.aroapp.io,,infra-monitoring-loki-gateway,http-metrics,edge,,,,,,,,,
+michal-prometheus-test,infra-dev,michal-prometheus-test-infra-dev.apps.j1lk3njp.eastus.aroapp.io,,michal-monitoring-prometheus-server,http,edge,,,,,,,,,
+prometheus-route,infra-dev,prometheus-dev.mapcolonies.net,/,infra-monitoring-prometheus-server,,edge,CN=*.mapcolonies.net,"C=US\nST=Arizona\nL=Scottsdale\nO=GoDaddy.com\, Inc.\nOU=http://certs.godaddy.com/repository/\nCN=Go Daddy Secure Certificate Authority - G2",2025-03-20T14:37:43.000Z,2026-04-21T12:21:26.000Z,A059F97F5A21867D,72:97:31:E4:77:0A:13:90:C7:18:2C:19:90:99:B8:C2:44:C2:40:0C,DNS:*.mapcolonies.net; DNS:mapcolonies.net,true,true
+test,infra-dev,test-infra-dev.apps.j1lk3njp.eastus.aroapp.io,,bla-nginx-service,nginx,,,,,,,,,,

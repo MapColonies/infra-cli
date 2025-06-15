@@ -233,10 +233,64 @@ class OpenShiftRouteRetriever {
   }
 }
 
-// CLI setup
-const program = new Command();
+function outputAsCSV(routes: RouteInfo[]): void {
+  // CSV header
+  console.log(
+    "Name,Namespace,Host,Path,Service,Port,TLS Termination,Certificate Subject,Certificate Issuer,Certificate Valid From,Certificate Valid To,Certificate Serial Number,Certificate Fingerprint,Certificate Subject Alt Names,Host Matches Certificate,Private Key Matches Certificate"
+  );
 
-program
+  // CSV rows
+  routes.forEach((route) => {
+    // Escape CSV values that contain commas or quotes
+    const escapeCsvValue = (value: string | undefined | Date | string[]) => {
+      if (value === undefined || value === null) return "";
+      let stringValue: string;
+      if (value instanceof Date) {
+        stringValue = value.toISOString();
+      } else if (Array.isArray(value)) {
+        stringValue = value.join("; ");
+      } else {
+        stringValue = String(value);
+      }
+      if (
+        stringValue.includes(",") ||
+        stringValue.includes('"') ||
+        stringValue.includes("\n")
+      ) {
+        // Replace newlines with escaped \n before wrapping in quotes
+        stringValue = stringValue.replace(/\r?\n/g, "\\n");
+        return `"${stringValue.replace(/"/g, '""')}"`;
+      }
+      return stringValue;
+    };
+
+    const cert = route.tls?.certificateInfo;
+
+    console.log(
+      [
+        escapeCsvValue(route.name),
+        escapeCsvValue(route.namespace),
+        escapeCsvValue(route.host),
+        escapeCsvValue(route.path),
+        escapeCsvValue(route.service),
+        escapeCsvValue(route.port),
+        escapeCsvValue(route.tls?.termination),
+        escapeCsvValue(cert?.subject),
+        escapeCsvValue(cert?.issuer),
+        escapeCsvValue(cert?.validFrom),
+        escapeCsvValue(cert?.validTo),
+        escapeCsvValue(cert?.serialNumber),
+        escapeCsvValue(cert?.fingerprint),
+        escapeCsvValue(cert?.subjectAltNames),
+        escapeCsvValue(route.tls?.hostMatchesCertificate?.toString()),
+        escapeCsvValue(route.tls?.privateKeyMatchesCertificate?.toString()),
+      ].join(",")
+    );
+  });
+}
+
+// CLI setup
+const program = new Command()
   .name("openshift-route-cert-checker")
   .description("Check OpenShift routes and their TLS certificates")
   .version("1.0.0")
@@ -246,7 +300,7 @@ program
     "Comma-separated list of namespaces"
   )
   .requiredOption("-s, --server <server>", "Kubernetes API server URL")
-  .option("-o, --output <format>", "Output format (json|table)", "json")
+  .option("-o, --output <format>", "Output format (json|table|csv)", "json")
   .option("--filter-no-cert", "Filter out routes without certificates")
   .action(async (options) => {
     try {
@@ -258,7 +312,7 @@ program
         options.server
       );
 
-      console.log(`Checking routes in namespaces: ${namespaces.join(", ")}`);
+      console.error(`Checking routes in namespaces: ${namespaces.join(", ")}`);
       let routes = await retriever.getRoutesFromNamespaces(namespaces);
 
       // Filter out routes without certificates if requested
@@ -296,6 +350,8 @@ program
         });
 
         console.log(table.toString());
+      } else if (options.output === "csv") {
+        outputAsCSV(routes);
       } else {
         console.log(JSON.stringify(routes, null, 2));
       }
