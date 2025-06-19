@@ -20,8 +20,10 @@ COPY --chown=node:node package*.json ./
 
 RUN npm ci --only=production
 
-COPY --chown=node:node --from=build /tmp/buildApp/dist .
+COPY --chown=node:node --from=build /tmp/buildApp/dist ./dist
+COPY --chown=node:node --from=build /tmp/buildApp/bin ./bin
+COPY --chown=node:node --from=build /tmp/buildApp/oclif.config.mjs ./
 
 USER node
-ENTRYPOINT [ "node", "index.mjs" ]
+ENTRYPOINT [ "./bin/run.js" ]
 CMD [ "--help" ]
