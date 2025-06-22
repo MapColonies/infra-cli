@@ -1,3 +1,5 @@
+import { stringify } from "csv-stringify/sync";
+
 export interface CsvColumn<TData> {
   readonly header: string;
   readonly getValue: (
@@ -6,49 +8,27 @@ export interface CsvColumn<TData> {
 }
 
 /**
- * Escapes a CSV value by handling quotes, commas, and newlines
- */
-const escapeCsvValue = (
-  value: string | undefined | Date | readonly string[]
-): string => {
-  if (value === undefined || value === null) return "";
-  let stringValue: string;
-  if (value instanceof Date) {
-    stringValue = value.toISOString();
-  } else if (Array.isArray(value)) {
-    stringValue = value.join("; ");
-  } else {
-    stringValue = String(value);
-  }
-  if (
-    stringValue.includes(",") ||
-    stringValue.includes('"') ||
-    stringValue.includes("\n")
-  ) {
-    stringValue = stringValue.replace(/\r?\n/g, "\\n");
-    return `"${stringValue.replace(/"/g, '""')}"`;
-  }
-  return stringValue;
-};
-
-/**
  * Creates CSV output from data using the provided column definitions
  */
 export const createCsv = <TData>(
   data: readonly TData[],
   columns: readonly CsvColumn<TData>[]
 ): string => {
-  const lines: string[] = [];
+  // Transform data into rows, keeping raw values for csv-stringify to handle
+  const rows = data.map((item) =>
+    columns.map((col) => {
+      const value = col.getValue(item);
+      if (value === undefined || value === null) return "";
+      if (value instanceof Date) return value.toISOString();
+      if (Array.isArray(value)) return value.join("; ");
+      // Return the raw value - let csv-stringify handle escaping
+      return value;
+    })
+  );
 
-  // Add header row
-  const headers = columns.map((col) => col.header).join(",");
-  lines.push(headers);
-
-  // Add data rows
-  data.forEach((item) => {
-    const row = columns.map((col) => escapeCsvValue(col.getValue(item)));
-    lines.push(row.join(","));
+  // Create CSV with headers - csv-stringify handles all escaping including newlines
+  return stringify(rows, {
+    header: true,
+    columns: columns.map((col) => col.header),
   });
-
-  return lines.join("\n");
 };
