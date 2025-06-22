@@ -41,7 +41,7 @@ export function createKubernetesClient(options?: KubernetesClientOptions): Resul
     } else {
       kc.loadFromDefault();
     }
-
+    console.log('xd');
     const api = kc.makeApiClient(k8s.CustomObjectsApi);
     return { ok: true, value: { kc, api } };
   } catch (error) {
