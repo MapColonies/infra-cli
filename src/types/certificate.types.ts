@@ -1,4 +1,4 @@
-import type { Result } from "./shared.types.js";
+import type { Result } from './shared.types.js';
 
 export interface CertificateInfo {
   readonly subject: string;

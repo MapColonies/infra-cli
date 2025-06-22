@@ -1,6 +1,8 @@
-# OpenShift Route Certificate Checker
+# Infra CLI
 
-A CLI tool to check OpenShift routes and validate their TLS certificates.
+A command-line interface tool for with different infra-team related commands, built using Node.js and TypeScript.
+
+Built with [oclif](https://oclif.io/), a framework for building CLIs in Node.js. Oclif provides a solid foundation with features like command parsing, help generation, and plugin architecture.
 
 ## Installation
 
@@ -11,27 +13,50 @@ npm install
 ## Usage
 
 ```bash
-# Basic usage
-npm start -- --token YOUR_K8S_TOKEN --namespaces "namespace1,namespace2"
+# List available commands
+npm start -- --help
 
-# With custom server
-npm start -- --token YOUR_K8S_TOKEN --namespaces "namespace1,namespace2" --server https://api.cluster.example.com:6443
-
-# Table output format
-npm start -- --token YOUR_K8S_TOKEN --namespaces "namespace1,namespace2" --output table
+# Run a specific command
+npm start -- <command> [options]
 ```
 
-## Options
+## Available Commands
 
-- `-t, --token <token>`: Kubernetes API token (required)
-- `-n, --namespaces <namespaces>`: Comma-separated list of namespaces (required)
-- `-s, --server <server>`: Kubernetes API server URL (default: https://kubernetes.default.svc)
-- `-o, --output <format>`: Output format - json or table (default: json)
+### Route
 
-## Features
+- `validate-certs`: Check OpenShift routes and validate their TLS certificates
 
-- Retrieves all routes from specified namespaces
-- Parses TLS certificates and extracts information
-- Validates if route host matches certificate subject/SAN
-- Checks if private key matches certificate
-- Shows certificate validity dates and other details
+## Adding New Commands
+
+To add a new command to the CLI, use the oclif generator:
+
+```bash
+# Generate a new command
+npx oclif generate command my-command
+
+# Generate a command in a specific directory (e.g., for grouped commands)
+npx oclif generate command my-group:my-command --commands-dir src/commands
+```
+
+This will create a new command file with the proper structure extending the `Command` class from `@oclif/core`. The command will be automatically available via the CLI once generated.
+
+You can also manually create commands by:
+
+1. Creating a new file in the `src/commands/` directory
+2. Extending the `Command` class from `@oclif/core`
+3. Defining the command logic in the `run()` method
+4. Adding command flags, arguments, and descriptions using oclif decorators
+
+Example:
+
+```typescript
+import { Command } from '@oclif/core';
+
+export default class MyCommand extends Command {
+  static description = 'Description of my command';
+
+  async run(): Promise<void> {
+    // Command implementation
+  }
+}
+```

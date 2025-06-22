@@ -1,4 +1,4 @@
-import type { CertificateInfo } from "./certificate.types.js";
+import type { CertificateInfo } from './certificate.types.js';
 
 export interface RouteInfo {
   readonly name: string;

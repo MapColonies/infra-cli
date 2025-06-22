@@ -4,6 +4,7 @@ FROM node:22 as build
 WORKDIR /tmp/buildApp
 
 COPY ./package*.json ./
+COPY .husky/ .husky/
 
 RUN npm install
 COPY . .
@@ -17,6 +18,7 @@ ENV NODE_ENV=production
 WORKDIR /usr/src/app
 
 COPY --chown=node:node package*.json ./
+COPY .husky/ .husky/
 
 RUN npm ci --only=production
 

@@ -1,16 +1,10 @@
-import {
-  X509Certificate,
-  createPublicKey,
-  createPrivateKey,
-} from "node:crypto";
-import type { CertificateInfo, Result } from "../../types/certificate.types.js";
+import { X509Certificate, createPublicKey, createPrivateKey } from 'node:crypto';
+import type { CertificateInfo, Result } from '../../types/certificate.types.js';
 
 /**
  * Parses an X.509 certificate from PEM format
  */
-export const parseCertificate = (
-  certificatePem: string
-): Result<CertificateInfo, Error> => {
+export const parseCertificate = (certificatePem: string): Result<CertificateInfo, Error> => {
   try {
     const cert = new X509Certificate(certificatePem);
 
@@ -21,9 +15,7 @@ export const parseCertificate = (
       validTo: new Date(cert.validTo),
       serialNumber: cert.serialNumber,
       fingerprint: cert.fingerprint,
-      subjectAltNames: cert.subjectAltName
-        ? cert.subjectAltName.split(", ")
-        : undefined,
+      subjectAltNames: cert.subjectAltName ? cert.subjectAltName.split(', ') : undefined,
     };
 
     return { ok: true, value: certificateInfo };
