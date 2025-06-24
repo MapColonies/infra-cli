@@ -9,6 +9,7 @@ if (process.env.GITHUB_ACTIONS) {
 export default defineConfig({
   test: {
     reporters,
+    disableConsoleIntercept: true,
     include: ['tests/**/*.spec.ts'],
     coverage: {
       enabled: true,

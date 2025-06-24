@@ -10,7 +10,7 @@ export interface KubernetesClientOptions {
 /**
  * Creates and configures a Kubernetes client
  */
-export function createKubernetesClient(options?: KubernetesClientOptions): Result<{ kc: KubeConfig; api: CustomObjectsApi }, Error> {
+export function createKubernetesClient(options?: KubernetesClientOptions): Result<CustomObjectsApi, Error> {
   try {
     const kc = new k8s.KubeConfig();
 
@@ -41,9 +41,9 @@ export function createKubernetesClient(options?: KubernetesClientOptions): Resul
     } else {
       kc.loadFromDefault();
     }
-    console.log('xd');
+
     const api = kc.makeApiClient(k8s.CustomObjectsApi);
-    return { ok: true, value: { kc, api } };
+    return { ok: true, value: api };
   } catch (error) {
     return {
       ok: false,
