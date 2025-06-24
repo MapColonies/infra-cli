@@ -1,4 +1,4 @@
-import type { CustomObjectsApi, KubeConfig } from '@kubernetes/client-node';
+import type { CustomObjectsApi } from '@kubernetes/client-node';
 import * as k8s from '@kubernetes/client-node';
 import type { Result } from '../../types/certificate.types.js';
 

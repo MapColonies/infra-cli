@@ -1,4 +1,4 @@
-import Table from 'cli-table3';
+import cliTable from 'cli-table3';
 
 export interface TableColumn<TData> {
   readonly header: string;
@@ -15,7 +15,7 @@ export interface TableOptions {
  * Creates a formatted table from data using the provided column definitions
  */
 export const createTable = <TData>(data: readonly TData[], columns: readonly TableColumn<TData>[], options: TableOptions = {}): string => {
-  const table = new Table({
+  const table = new cliTable({
     head: columns.map((col) => col.header),
     colWidths: columns.map((col) => col.width).filter((width): width is number => width !== undefined),
     wordWrap: options.wordWrap ?? true,

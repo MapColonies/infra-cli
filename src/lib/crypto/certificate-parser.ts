@@ -1,4 +1,4 @@
-import { X509Certificate, createPublicKey, createPrivateKey } from 'node:crypto';
+import { X509Certificate } from 'node:crypto';
 import type { CertificateInfo, Result } from '../../types/certificate.types.js';
 
 /**
@@ -15,7 +15,7 @@ export const parseCertificate = (certificatePem: string): Result<CertificateInfo
       validTo: new Date(cert.validTo),
       serialNumber: cert.serialNumber,
       fingerprint: cert.fingerprint,
-      subjectAltNames: cert.subjectAltName ? cert.subjectAltName.split(', ') : undefined,
+      subjectAltNames: cert.subjectAltName !== undefined ? cert.subjectAltName.split(', ') : undefined,
     };
 
     return { ok: true, value: certificateInfo };
