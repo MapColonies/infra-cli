@@ -26,6 +26,10 @@ npm start -- <command> [options]
 
 - `validate-certs`: Check OpenShift routes and validate their TLS certificates
 
+### Monitoring
+
+- `metrics-annotations`: Check Kubernetes deployments and stateful sets for Prometheus metrics annotations
+
 ## Adding New Commands
 
 To add a new command to the CLI, use the oclif generator:
