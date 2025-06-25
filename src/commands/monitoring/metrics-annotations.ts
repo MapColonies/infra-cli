@@ -81,10 +81,6 @@ const workloadCsvColumns: CsvColumn<WorkloadMetricsInfo>[] = [
     getValue: (workload) => workload.metricsAnnotations?.path,
   },
   {
-    header: 'Scrape Enabled',
-    getValue: (workload) => workload.metricsAnnotations?.scrapeEnabled?.toString(),
-  },
-  {
     header: 'Created At',
     getValue: (workload) => workload.createdAt,
   },
