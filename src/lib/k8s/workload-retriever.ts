@@ -5,13 +5,13 @@ import type { Result } from '../../types/shared.types.js';
 export class KubernetesWorkloadRetriever {
   public constructor(private readonly kubeClient: AppsV1Api) {}
 
-  public async getWorkloadMetricsInfoFromNamespaces(namespaces: string[]): Promise<Result<WorkloadMetricsInfo[], Error>> {
+  public async getWorkloadMetricsInfoFromNamespaces(namespaces: string[], labelSelector?: string): Promise<Result<WorkloadMetricsInfo[], Error>> {
     try {
       const allWorkloads: WorkloadMetricsInfo[] = [];
 
       for (const namespace of namespaces) {
-        const deployments = await this.getDeployments(namespace);
-        const statefulSets = await this.getStatefulSets(namespace);
+        const deployments = await this.getDeployments(namespace, labelSelector);
+        const statefulSets = await this.getStatefulSets(namespace, labelSelector);
 
         const deploymentWorkloads = deployments.map((deployment) => ({
           name: deployment.metadata?.name ?? '',
@@ -42,13 +42,13 @@ export class KubernetesWorkloadRetriever {
     }
   }
 
-  public async getDeployments(namespace: string): Promise<V1Deployment[]> {
-    const response = await this.kubeClient.listNamespacedDeployment({ namespace });
+  public async getDeployments(namespace: string, labelSelector?: string): Promise<V1Deployment[]> {
+    const response = await this.kubeClient.listNamespacedDeployment({ namespace, labelSelector });
     return response.items;
   }
 
-  public async getStatefulSets(namespace: string): Promise<V1StatefulSet[]> {
-    const response = await this.kubeClient.listNamespacedStatefulSet({ namespace });
+  public async getStatefulSets(namespace: string, labelSelector?: string): Promise<V1StatefulSet[]> {
+    const response = await this.kubeClient.listNamespacedStatefulSet({ namespace, labelSelector });
     return response.items;
   }
 

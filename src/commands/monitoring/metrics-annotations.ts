@@ -109,6 +109,10 @@ export default class MetricsAnnotations extends Command {
       delimiter: ',',
       multiple: true,
     }),
+    'label-selector': Flags.string({
+      char: 'l',
+      description: 'Label selector to filter workloads',
+    }),
     output: Flags.string({
       char: 'o',
       description: 'Output format',
@@ -137,7 +141,7 @@ export default class MetricsAnnotations extends Command {
 
     this.logToStderr(`Checking workloads in namespaces: ${flags.namespaces.join(', ')}`);
 
-    const workloadsResult = await retriever.getWorkloadMetricsInfoFromNamespaces(flags.namespaces);
+    const workloadsResult = await retriever.getWorkloadMetricsInfoFromNamespaces(flags.namespaces, flags['label-selector']);
 
     if (!workloadsResult.ok) {
       this.error(`Error: ${workloadsResult.error.message}`);

@@ -137,6 +137,10 @@ export default class ValidateRouteCerts extends Command {
       delimiter: ',',
       multiple: true,
     }),
+    'label-selector': Flags.string({
+      char: 'l',
+      description: 'Label selector for filtering routes',
+    }),
     output: Flags.string({
       char: 'o',
       description: 'Output format',
@@ -165,7 +169,7 @@ export default class ValidateRouteCerts extends Command {
 
     this.logToStderr(`Checking routes in namespaces: ${flags.namespaces.join(', ')}`);
 
-    const routesResult = await retriever.getRoutesFromNamespaces(flags.namespaces);
+    const routesResult = await retriever.getRoutesFromNamespaces(flags.namespaces, flags['label-selector']);
 
     if (!routesResult.ok) {
       this.error(`Error: ${routesResult.error.message}`);

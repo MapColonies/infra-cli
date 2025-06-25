@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { captureOutput } from '@oclif/test';
 import { expect, describe, it, beforeEach, afterEach, vi, MockedObject } from 'vitest';
 import { disableNetConnect } from 'nock';
@@ -18,6 +19,8 @@ describe('monitoring metrics-annotations command', () => {
     // Create mock kubeClient
     const mockedK8sFactory = vi.mocked(k8sFactory);
     mockedKubeClient = vi.mockObject(AppsV1Api.prototype);
+    mockedKubeClient.listNamespacedDeployment = vi.fn();
+    mockedKubeClient.listNamespacedStatefulSet = vi.fn();
 
     mockedK8sFactory.createKubernetesClient.mockReturnValue({
       ok: true,
@@ -262,6 +265,58 @@ describe('monitoring metrics-annotations command', () => {
 
       expect(noAnnotations?.metricsAnnotations?.scrapeEnabled).toBeUndefined();
       expect(noAnnotations?.metricsAnnotations?.port).toBeUndefined();
+    });
+
+    it('should pass label selector to API calls when provided', async () => {
+      const deployment = generateMockDeployment('test-deployment', 'default');
+
+      mockedKubeClient.listNamespacedDeployment.mockResolvedValue({
+        items: [deployment],
+      });
+
+      mockedKubeClient.listNamespacedStatefulSet.mockResolvedValue({
+        items: [],
+      });
+
+      const { error } = await captureOutput(async () =>
+        metricsAnnotations.run(['--token=test-token', '--server=https://api.test.com', '--namespaces=default', '--label-selector=app=test,env=prod'])
+      );
+
+      expect(error).toBeUndefined();
+      expect(mockedKubeClient.listNamespacedDeployment).toHaveBeenCalledWith({
+        namespace: 'default',
+        labelSelector: 'app=test,env=prod',
+      });
+      expect(mockedKubeClient.listNamespacedStatefulSet).toHaveBeenCalledWith({
+        namespace: 'default',
+        labelSelector: 'app=test,env=prod',
+      });
+    });
+
+    it('should work without label selector', async () => {
+      const deployment = generateMockDeployment('test-deployment', 'default');
+
+      mockedKubeClient.listNamespacedDeployment.mockResolvedValue({
+        items: [deployment],
+      });
+
+      mockedKubeClient.listNamespacedStatefulSet.mockResolvedValue({
+        items: [],
+      });
+
+      const { error } = await captureOutput(async () =>
+        metricsAnnotations.run(['--token=test-token', '--server=https://api.test.com', '--namespaces=default'])
+      );
+
+      expect(error).toBeUndefined();
+      expect(mockedKubeClient.listNamespacedDeployment).toHaveBeenCalledWith({
+        namespace: 'default',
+        labelSelector: undefined,
+      });
+      expect(mockedKubeClient.listNamespacedStatefulSet).toHaveBeenCalledWith({
+        namespace: 'default',
+        labelSelector: undefined,
+      });
     });
   });
 

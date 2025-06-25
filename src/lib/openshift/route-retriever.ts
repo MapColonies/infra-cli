@@ -14,12 +14,12 @@ export class OpenShiftRouteRetriever {
   /**
    * Retrieves routes from multiple namespaces
    */
-  public async getRoutesFromNamespaces(namespaces: readonly string[]): Promise<Result<RouteInfo[], Error>> {
+  public async getRoutesFromNamespaces(namespaces: readonly string[], labelSelector?: string): Promise<Result<RouteInfo[], Error>> {
     const allRoutes: RouteInfo[] = [];
     const errors: string[] = [];
 
     for (const namespace of namespaces) {
-      const result = await this.getRoutesFromNamespace(namespace);
+      const result = await this.getRoutesFromNamespace(namespace, labelSelector);
       if (result.ok) {
         allRoutes.push(...result.value);
       } else {
@@ -34,12 +34,13 @@ export class OpenShiftRouteRetriever {
     return { ok: true, value: allRoutes };
   }
 
-  private async getRoutesFromNamespace(namespace: string): Promise<Result<RouteInfo[], Error>> {
+  private async getRoutesFromNamespace(namespace: string, labelSelector?: string): Promise<Result<RouteInfo[], Error>> {
     try {
       const response = (await this.k8sApi.listNamespacedCustomObject({
         group: 'route.openshift.io',
         version: 'v1',
         namespace: namespace,
+        labelSelector: labelSelector,
         plural: 'routes',
       })) as components['schemas']['com.github.openshift.api.route.v1.RouteList'];
 
