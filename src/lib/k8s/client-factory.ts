@@ -1,4 +1,4 @@
-import type { CustomObjectsApi, KubeConfig } from '@kubernetes/client-node';
+import type { CustomObjectsApi } from '@kubernetes/client-node';
 import * as k8s from '@kubernetes/client-node';
 import type { Result } from '../../types/certificate.types.js';
 
@@ -10,7 +10,7 @@ export interface KubernetesClientOptions {
 /**
  * Creates and configures a Kubernetes client
  */
-export function createKubernetesClient(options?: KubernetesClientOptions): Result<{ kc: KubeConfig; api: CustomObjectsApi }, Error> {
+export function createKubernetesClient(options?: KubernetesClientOptions): Result<CustomObjectsApi, Error> {
   try {
     const kc = new k8s.KubeConfig();
 
@@ -43,7 +43,7 @@ export function createKubernetesClient(options?: KubernetesClientOptions): Resul
     }
 
     const api = kc.makeApiClient(k8s.CustomObjectsApi);
-    return { ok: true, value: { kc, api } };
+    return { ok: true, value: api };
   } catch (error) {
     return {
       ok: false,

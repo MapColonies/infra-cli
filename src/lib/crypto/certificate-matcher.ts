@@ -11,11 +11,12 @@ export const checkHostMatchesCertificate = (host: string, certInfo: CertificateI
     certInfo.subjectAltNames?.some((san) => {
       const cleanSan = san.replace(/^[A-Z]+:/, '');
       if (cleanSan.startsWith('*.')) {
-        const domain = cleanSan.substring(2);
+        const WILDCARD_PREFIX_LENGTH = 2; // Length of '*.'
+        const domain = cleanSan.substring(WILDCARD_PREFIX_LENGTH);
         return host.endsWith(domain) && host.split('.').length === domain.split('.').length + 1;
       }
       return cleanSan === host;
-    }) || false;
+    }) ?? false;
 
   return cnMatch || sanMatch;
 };

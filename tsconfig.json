@@ -1,9 +1,7 @@
 {
   "extends": "@map-colonies/tsconfig/tsconfig-app.json",
   "compilerOptions": {
-    "target": "esnext",
-    "outDir": "dist",
-    "rootDir": "src"
+    "target": "esnext"
   },
-  "include": ["src"]
+  "include": ["src", "tests"]
 }

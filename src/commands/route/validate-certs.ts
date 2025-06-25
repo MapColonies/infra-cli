@@ -26,12 +26,12 @@ const routeTableColumns: TableColumn<RouteInfo>[] = [
   {
     header: 'TLS',
     width: 10,
-    getValue: (route) => route.tls?.termination || 'None',
+    getValue: (route) => route.tls?.termination ?? 'None',
   },
   {
     header: 'Host Match',
     width: 12,
-    getValue: (route) => {
+    getValue: (route): string => {
       const hostMatch = route.tls?.hostMatchesCertificate;
       return hostMatch === true ? '✓' : hostMatch === false ? '✗' : 'N/A';
     },
@@ -39,7 +39,7 @@ const routeTableColumns: TableColumn<RouteInfo>[] = [
   {
     header: 'Key Match',
     width: 12,
-    getValue: (route) => {
+    getValue: (route): string => {
       const keyMatch = route.tls?.privateKeyMatchesCertificate;
       return keyMatch === true ? '✓' : keyMatch === false ? '✗' : 'N/A';
     },
@@ -160,9 +160,9 @@ export default class ValidateRouteCerts extends Command {
       this.error(`Failed to create Kubernetes client: ${clientResult.error.message}`);
     }
 
-    const retriever = new OpenShiftRouteRetriever(clientResult.value.api);
+    const retriever = new OpenShiftRouteRetriever(clientResult.value);
 
-    this.log(`Checking routes in namespaces: ${flags.namespaces.join(', ')}`);
+    this.logToStderr(`Checking routes in namespaces: ${flags.namespaces.join(', ')}`);
 
     const routesResult = await retriever.getRoutesFromNamespaces(flags.namespaces);
 
