@@ -1,4 +1,5 @@
 import { Command, Flags } from '@oclif/core';
+import { CustomObjectsApi } from '@kubernetes/client-node';
 import type { RouteInfo } from '../../types/route.types.js';
 import { OpenShiftRouteRetriever } from '../../lib/openshift/route-retriever.js';
 import { createKubernetesClient } from '../../lib/k8s/client-factory.js';
@@ -151,7 +152,7 @@ export default class ValidateRouteCerts extends Command {
   public async run(): Promise<void> {
     const { flags } = await this.parse(ValidateRouteCerts);
 
-    const clientResult = createKubernetesClient({
+    const clientResult = createKubernetesClient(CustomObjectsApi, {
       token: flags.token,
       server: flags.server,
     });
