@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { captureOutput } from '@oclif/test';
 import { expect, describe, it, beforeEach, afterEach, vi, beforeAll, MockedObject } from 'vitest';
 import { disableNetConnect } from 'nock';
@@ -43,6 +44,7 @@ describe('route validate-certs command', () => {
     // Create mock kubeClient
     const mockedK8sFactory = vi.mocked(k8sFactory);
     mockedKubeClient = vi.mockObject(CustomObjectsApi.prototype);
+    mockedKubeClient.listNamespacedCustomObject = vi.fn();
 
     mockedK8sFactory.createKubernetesClient.mockReturnValue({
       ok: true,
@@ -311,6 +313,74 @@ describe('route validate-certs command', () => {
       expect(edgeRouteOutput?.tls?.termination).toBe('edge');
       expect(passthroughRouteOutput?.tls?.termination).toBe('passthrough');
       expect(reencryptRouteOutput?.tls?.termination).toBe('reencrypt');
+    });
+
+    it('should pass label selector to API calls when provided', async () => {
+      const route = generateRoute({
+        metadata: {
+          name: 'test-route',
+          namespace: 'default',
+        },
+        spec: {
+          host: 'app.example.com',
+          tls: {
+            termination: 'edge',
+            certificate: certs[0]?.cert,
+            key: certs[0]?.private,
+          },
+        },
+      });
+
+      mockedKubeClient.listNamespacedCustomObject.mockResolvedValue({
+        items: [route],
+      });
+
+      const { error } = await captureOutput(async () =>
+        validateRouteCerts.run(['--token=test-token', '--server=https://api.test.com', '--namespaces=default', '--label-selector=app=test,env=prod'])
+      );
+
+      expect(error).toBeUndefined();
+      expect(mockedKubeClient.listNamespacedCustomObject).toHaveBeenCalledWith({
+        group: 'route.openshift.io',
+        version: 'v1',
+        namespace: 'default',
+        labelSelector: 'app=test,env=prod',
+        plural: 'routes',
+      });
+    });
+
+    it('should work without label selector', async () => {
+      const route = generateRoute({
+        metadata: {
+          name: 'test-route',
+          namespace: 'default',
+        },
+        spec: {
+          host: 'app.example.com',
+          tls: {
+            termination: 'edge',
+            certificate: certs[0]?.cert,
+            key: certs[0]?.private,
+          },
+        },
+      });
+
+      mockedKubeClient.listNamespacedCustomObject.mockResolvedValue({
+        items: [route],
+      });
+
+      const { error } = await captureOutput(async () =>
+        validateRouteCerts.run(['--token=test-token', '--server=https://api.test.com', '--namespaces=default'])
+      );
+
+      expect(error).toBeUndefined();
+      expect(mockedKubeClient.listNamespacedCustomObject).toHaveBeenCalledWith({
+        group: 'route.openshift.io',
+        version: 'v1',
+        namespace: 'default',
+        labelSelector: undefined,
+        plural: 'routes',
+      });
     });
   });
 
