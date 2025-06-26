@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/MapColonies/infra-cli/compare/v1.0.0...v1.1.0) (2025-06-26)
+
+
+### Features
+
+* added filtering by label selector ([#7](https://github.com/MapColonies/infra-cli/issues/7)) ([d6cad5e](https://github.com/MapColonies/infra-cli/commit/d6cad5e6ad448bd52b0a73e1aaffd693affd52c3))
+
 ## 1.0.0 (2025-06-26)
 
 
