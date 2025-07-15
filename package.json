@@ -30,7 +30,7 @@
     "@oclif/plugin-not-found": "^3.2.57",
     "@oclif/plugin-version": "^2.2.30",
     "cli-table3": "^0.6.5",
-    "csv-stringify": "^6.5.2"
+    "csv-stringify": "^6.6.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.0",
